@@ -22,15 +22,19 @@ if [[ "$DENY" == "true" && "$ACTION" == "block" ]]; then
     echo "IMAGE BLOCKED DUE TO SECURITY POLICY"
     echo "${POLICY_NAME} - ${POLICY_DESCRIPTION}"
     echo "============================================================"
+    echo " "
     echo "Malware :"
     curl -s -X GET -H "Authorization: Bearer ${FALCON_API_BEARER_TOKEN}" \
                     "https://container-upload.${FALCON_CLOUD_REGION}.crowdstrike.com/reports?repository=$IMAGE_REPO&tag=$IMAGE_TAG" |\
                     jq -r '.ELFBinaries[] | select(.Malicious == true) | "\(.Malicious) - \(.Permissions) : \(.Path)"'
     
+    echo " "
     echo "Detections :"
     curl -s -X GET -H "Authorization: Bearer ${FALCON_API_BEARER_TOKEN}" \
                     "https://container-upload.${FALCON_CLOUD_REGION}.crowdstrike.com/reports?repository=$IMAGE_REPO&tag=$IMAGE_TAG" |\
                     jq -r '.Detections[].Detection | "\(.Severity) - \(.Type) - \(.Name) - \(.Title) - \(.Details.Match)"'
+    
+    echo " "
     echo "Vulnerabilities :"
     curl -s -X GET -H "Authorization: Bearer ${FALCON_API_BEARER_TOKEN}" \
                     "https://container-upload.${FALCON_CLOUD_REGION}.crowdstrike.com/reports?repository=$IMAGE_REPO&tag=$IMAGE_TAG" |\
